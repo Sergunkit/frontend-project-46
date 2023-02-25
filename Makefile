@@ -2,7 +2,7 @@
 install:
 	npm ci
 gendiff:
-	node bin/gendiff.js
+	bin/gendiff.js file1.json file2.json
 publish:
 	npm publish --dry-run
 .PHONY:
