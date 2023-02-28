@@ -15,7 +15,7 @@ const getMap = (filepath) => { // получает путь к файлу выд
     }
 };
 
-const compareElem = (key, value1, map1, map2) => { //  поэлементно сравнивает карты
+const compareElem = (key, value1, map1, map2) => { //  поэлементно сравнивает 'Map'-ы
     const value2 = map2.get(key)
     if (!map2.has(key)) {
         return `- ${key}, ${value1}` // если во втором файле нет ключа - возвр. "-"
@@ -43,7 +43,7 @@ const genDiff = (filepath1, filepath2, option) => {
         }
         diff.set(...pair);
     };
-    for(const [key, value] of map2 ) { diff.set(`+ ${key}`, value) }
+    for(const [key, value] of map2 ) { diff.set(`+ ${key}`, ` ${value}`) }
     // прибавляем '+' к уникальным ключам 2-го объекта, добавляем в diff
     const sortDiff = new Map([...diff.entries()].sort((a, b) => { // сортировка
         if (a[0].slice(2) === b[0].slice(2)) { return 0 };
