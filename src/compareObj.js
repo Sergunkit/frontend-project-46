@@ -1,19 +1,20 @@
 import fs from 'fs';
 import path from 'path';
 import output from './output.js'
+import getMap from './parsers.js'
 
-const getMap = (filepath) => { // получает путь к файлу выдает содержимое в виде Map
-    if (typeof filepath === 'Object') return (new Map(Object.entries(filepath)));
-    // если getMap вызывается в рекурсии возвращаем сортированный Map
-    const fullPath = path.resolve(filepath); // получаем (проверяем) полный путь к файлу
-    try {
-        const data = JSON.parse(fs.readFileSync(fullPath, "utf8")); // получаем строку, делаем объект
-        return (new Map(Object.entries(data))); // делаем из него карту, возвращаем
-        ;
-    } catch (err) {
-        console.error(err);
-    }
-};
+// const getMap = (filepath) => { // получает путь к файлу выдает содержимое в виде Map
+//     if (typeof filepath === 'Object') return (new Map(Object.entries(filepath)));
+//     // если getMap вызывается в рекурсии возвращаем Map
+//     const fullPath = path.resolve(filepath); // получаем (проверяем) полный путь к файлу
+//     try {
+//         const data = JSON.parse(fs.readFileSync(fullPath, "utf8")); // получаем строку, делаем объект
+//         return (new Map(Object.entries(data))); // делаем из него карту, возвращаем
+//         ;
+//     } catch (err) {
+//         console.error(err);
+//     }
+// };
 
 const compareElem = (key, value1, map1, map2) => { //  поэлементно сравнивает 'Map'-ы
     const value2 = map2.get(key)
@@ -22,7 +23,7 @@ const compareElem = (key, value1, map1, map2) => { //  поэлементно с
     };
     if (map1.get(key) === map2.get(key)) {
         map2.delete(key); // удаляем общее значение из второго объекта
-        return `  ${key}, ${value1}` // если значения совпадают переписываем пару без знаков
+        return `  ${key}, ${value1}` // если значения совпадают переписываем пару без знаков '+' и '-'
     };
     if ((typeof value1 === 'Object') && (typeof value2 === 'Object')) {
         genDiff(value1, value2); // если значения - объекты - рекурсивно вызываем genDiff
