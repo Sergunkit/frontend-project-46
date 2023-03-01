@@ -10,4 +10,5 @@ https://asciinema.org/a/yIR5Yal0z323Yfn5dufWTTclX
 
 ### https://github.com/Sergunkit/frontend-project-46/actions/workflows/first.yml
 
-[![Test Status](https://github.com/Sergunkit/frontend-project-46/workflows/first.yml/badge.svg)](https://github.com/Sergunkit/frontend-project-46/actions)
+[![Test Status](https://github.com/Sergunkit/frontend-project-46/workflows/first/badge.svg)]
+(https://github.com/Sergunkit/frontend-project-46/actions)
