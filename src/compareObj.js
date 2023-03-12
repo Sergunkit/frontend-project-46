@@ -1,56 +1,74 @@
-import fs from 'fs';
-import path from 'path';
-import output from './output.js'
-import getMap from './parsers.js'
+import { output } from './output.js'
+import getObj from './parsers.js'
 
-// const getMap = (filepath) => { // получает путь к файлу выдает содержимое в виде Map
-//     if (typeof filepath === 'Object') return (new Map(Object.entries(filepath)));
-//     // если getMap вызывается в рекурсии возвращаем Map
-//     const fullPath = path.resolve(filepath); // получаем (проверяем) полный путь к файлу
-//     try {
-//         const data = JSON.parse(fs.readFileSync(fullPath, "utf8")); // получаем строку, делаем объект
-//         return (new Map(Object.entries(data))); // делаем из него карту, возвращаем
-//         ;
-//     } catch (err) {
-//         console.error(err);
-//     }
-// };
-
-const compareElem = (key, value1, map1, map2) => { //  поэлементно сравнивает 'Map'-ы
-    const value2 = map2.get(key)
-    if (!map2.has(key)) {
-        return `- ${key}, ${value1}` // если во втором файле нет ключа - возвр. "-"
-    };
-    if (map1.get(key) === map2.get(key)) {
-        map2.delete(key); // удаляем общее значение из второго объекта
-        return `  ${key}, ${value1}` // если значения совпадают переписываем пару без знаков '+' и '-'
-    };
-    if ((typeof value1 === 'Object') && (typeof value2 === 'Object')) {
-        genDiff(value1, value2); // если значения - объекты - рекурсивно вызываем genDiff
-    }
-    map2.delete(key); // удаляем общее значение из второго объекта
-    return `- ${key}, ${value1},+ ${key}, ${value2}`; // если значения разные возвр. два значения в строке
+const genDiff = (filepath1, filepath2, option = 'stilish') => { // получает два объекта и формирует diff в JSON
+    const obj1 = getObj(filepath1);
+    const obj2 = getObj(filepath2);
+    let diff = makeDiff(obj1, obj2);
+    diff = addingSpaces(diff);
+    // console.log(diff)
+    // return output(JSON.stringify(diff), option);
+    return output(diff, option);
 };
-
-const genDiff = (filepath1, filepath2, option) => {
-    const map1 = getMap(filepath1);
-    const map2 = getMap(filepath2);
-    let diff = new Map();
-    for(const [key, value] of map1 ) {
-        const pair = compareElem(key, value, map1, map2).split(',')
-        if (pair.length > 2) {
-            const [x, y, z, u] = pair; // если в строке два занечиния - разделяем на пары
-            diff.set(x, y).set(z, u);
-        }
-        diff.set(...pair);
+const makeDiff  = (obj1, obj2, diff) => { // рекурс., вход: вложенные объекты и промежуточный diff
+    for(const key in obj1 ) { // итерирует эл-ты первого объекта
+        let pair = {};
+        pair = compareElem(key, obj1, obj2)
+        diff = { ...diff, ...pair };
     };
-    for(const [key, value] of map2 ) { diff.set(`+ ${key}`, ` ${value}`) }
-    // прибавляем '+' к уникальным ключам 2-го объекта, добавляем в diff
-    const sortDiff = new Map([...diff.entries()].sort((a, b) => { // сортировка
+    for (let key2 in obj2 ) { // добавляется уникальные объекты второго объекта
+        const value2 = obj2[key2];
+        key2 = `+ ${key2}`;
+        diff[key2] = value2;
+    };
+    diff = [...Object.entries(diff)].sort((a, b) => { // сортировка промежуточного diff-a
         if (a[0].slice(2) === b[0].slice(2)) { return 0 };
-        return a[0][2] > b[0][2] ? 1 : -1
-    }));
-    return output(sortDiff, option);
+        return a[0].slice(2) > b[0].slice(2) ? 1 : -1;
+      });
+    diff = Object.fromEntries(diff);
+
+    return diff;
 };
+
+const compareElem = (key, obj1, obj2) => { //  поэлементно сравнивает объекты
+    const value1 = obj1[key];
+    const value2 = obj2[key];
+    if (!(key in obj2)) {       
+        key = `- ${key}`;
+        return {[key]: value1}; // если во втором файле нет ключа - возвр. "-"
+    };
+    if (obj1[key] === obj2[key]) {
+        delete obj2[key]; // удаляем общее значение из второго объекта
+        key = `  ${key}`;
+        return { [key]: value1 }; // если значения совпадают переписываем пару без знаков '+' и '-'
+    };
+    if ((typeof value1 === 'object') && (typeof value2 === 'object')) {
+        delete obj2[key]; // удаляем общее значение из второго объекта
+        key = `  ${key}`;
+        return  { [key]: makeDiff(value1, value2) };
+        // если значения - объекты - рекурсивно вызываем makeDiff
+    };
+    delete obj2[key]
+    let key1 = `- ${key}`;
+    let key2 = `+ ${key}`;
+    return {[key1]: value1, [key2]: value2}; // если значения разные возвр. два значения
+};
+
+const addingSpaces = (obj) => {
+    for (let key in obj) {
+        const value = obj[key];
+        if ((!(key.startsWith('  ')) && (!(key.startsWith('+ ')) && (!(key.startsWith('- ')))))) {
+            delete obj[key];
+            key = `  ${key}`;
+            obj[key] = value;
+        };
+        if (typeof value === 'object') {
+            obj = {...obj, [key]: addingSpaces(value)};
+        };
+    };
+    return obj;
+};
+
 
 export default genDiff;
+

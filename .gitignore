@@ -2,3 +2,4 @@ node_modules/
 .DS_Store
 probi.js
 project-46.yml
+coverage/
