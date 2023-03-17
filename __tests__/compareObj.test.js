@@ -1,15 +1,11 @@
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
-// import jest from 'jest';
 import makeStylish from '../formatters/stylish.js';
 import readFile from '../src/parsers.js';
 import genDiff from '../src/compareObj.js';
 
-// jest.useFakeTimers();
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-
 const getFixturePath = (filename) => path.join(__dirname, '..', '__fixtures__', filename);
 
 const makeTestString = (filePath) => {
@@ -22,6 +18,7 @@ const makePlainTestString = (filePath) => {
   const str = readFile(getFixturePath(filePath));
   return str;
 };
+
 const makeJsonTestString = (filePath) => {
   const str = `[${JSON.stringify(readFile(getFixturePath(filePath)))}]`;
   return str;
