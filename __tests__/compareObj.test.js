@@ -2,7 +2,7 @@ import genDiff from '../src/compareObj.js'
 import { fileURLToPath } from 'url';
 import path from 'path';
 import { dirname } from 'path';
-import { makeStylish } from '../src/output.js';
+import { makeStylish } from '../formatters/stylish.js';
 import readFile from '../src/parsers.js'
 
 const __filename = fileURLToPath(import.meta.url);
@@ -13,18 +13,27 @@ const getFixturePath = (filename) => path.join(__dirname, '..', '__fixtures__', 
 const makeTestString = (filePath) => {
   let fixtureFile = readFile(getFixturePath(filePath));
   fixtureFile = makeStylish(fixtureFile);
-  return fixtureFile
+  return fixtureFile;
 };
+
+const makePlainTestString = (filePath) => {
+  let str = readFile(getFixturePath(filePath));
+  return str;
+}
 
 test('FlatFile gendiff check', () => {
   expect(genDiff(getFixturePath('file1.json'), getFixturePath('file2.json'))).toEqual(makeTestString('output_12.json'));
   expect(genDiff(getFixturePath('file1.yaml'), getFixturePath('file2.yaml'))).toEqual(makeTestString('output_12.json'));
 });
 
-test('TreeFile gendiff chek', () => {
+test('TreeFile gendiff check', () => {
   expect(genDiff(getFixturePath('file3.json'), getFixturePath('file4.json'))).toEqual(makeTestString('output_34.json'));
   expect(genDiff(getFixturePath('file3.yaml'), getFixturePath('file4.yaml'))).toEqual(makeTestString('output_34.json'));
 
+});
+
+test ('Plain formatter check', () => {
+  expect(genDiff(getFixturePath('file3.json'), getFixturePath('file4.json'), 'plain')).toEqual(makePlainTestString('output_34_plain'));
 });
 
 test('json-string modifying', () => {

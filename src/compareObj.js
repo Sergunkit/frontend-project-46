@@ -1,15 +1,14 @@
-import { output } from './output.js'
-import getObj from './parsers.js'
+import getObj from './parsers.js';
+import { output } from '../formatters/index.js';
 
-const genDiff = (filepath1, filepath2, option = 'stilish') => { // получает два объекта и формирует diff в JSON
+const genDiff = (filepath1, filepath2, option = 'stylish') => { // получает два объекта и формирует diff
     const obj1 = getObj(filepath1);
     const obj2 = getObj(filepath2);
     let diff = makeDiff(obj1, obj2);
     diff = addingSpaces(diff);
-    // console.log(diff)
-    // return output(JSON.stringify(diff), option);
     return output(diff, option);
 };
+
 const makeDiff  = (obj1, obj2, diff) => { // рекурс., вход: вложенные объекты и промежуточный diff
     for(const key in obj1 ) { // итерирует эл-ты первого объекта
         let pair = {};
@@ -26,7 +25,6 @@ const makeDiff  = (obj1, obj2, diff) => { // рекурс., вход: вложе
         return a[0].slice(2) > b[0].slice(2) ? 1 : -1;
       });
     diff = Object.fromEntries(diff);
-
     return diff;
 };
 
@@ -54,7 +52,7 @@ const compareElem = (key, obj1, obj2) => { //  поэлементно сравн
     return {[key1]: value1, [key2]: value2}; // если значения разные возвр. два значения
 };
 
-const addingSpaces = (obj) => {
+const addingSpaces = (obj) => { // добавляет пробелы к вложенным (добавленным /удаленным) ключам
     for (let key in obj) {
         const value = obj[key];
         if ((!(key.startsWith('  ')) && (!(key.startsWith('+ ')) && (!(key.startsWith('- ')))))) {
@@ -69,6 +67,4 @@ const addingSpaces = (obj) => {
     return obj;
 };
 
-
 export default genDiff;
-
