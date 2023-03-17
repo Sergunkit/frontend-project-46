@@ -1,9 +1,9 @@
-import genDiff from '../src/compareObj.js'
+import { genDiff } from '../src/compareObj.js';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import { dirname } from 'path';
 import { makeStylish } from '../formatters/stylish.js';
-import readFile from '../src/parsers.js'
+import readFile from '../src/parsers.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -18,6 +18,10 @@ const makeTestString = (filePath) => {
 
 const makePlainTestString = (filePath) => {
   let str = readFile(getFixturePath(filePath));
+  return str;
+}
+const makeJsonTestString = (filePath) => {
+  let str = `[${JSON.stringify(readFile(getFixturePath(filePath)))}]`;
   return str;
 }
 
@@ -35,6 +39,10 @@ test('TreeFile gendiff check', () => {
 test ('Plain formatter check', () => {
   expect(genDiff(getFixturePath('file3.json'), getFixturePath('file4.json'), 'plain')).toEqual(makePlainTestString('output_34_plain'));
 });
+
+test ('JSON formatter check', () => {
+  expect(genDiff(getFixturePath('file3.json'), getFixturePath('file4.json'), 'json')).toEqual(makeJsonTestString('output_34.json'));
+})
 
 test('json-string modifying', () => {
   const output = '{\n\

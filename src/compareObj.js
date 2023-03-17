@@ -67,4 +67,4 @@ const addingSpaces = (obj) => { // добавляет пробелы к влож
     return obj;
 };
 
-export default genDiff;
+export { genDiff };
