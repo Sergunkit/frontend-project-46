@@ -10,4 +10,4 @@
 
 https://asciinema.org/a/yIR5Yal0z323Yfn5dufWTTclX
 
-[![asciicast](https://asciinema.org/a/568642.svg)](https://asciinema.org/a/568642)
+https://asciinema.org/a/568642
