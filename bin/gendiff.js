@@ -11,3 +11,5 @@ program
   .argument('<filepath2>', 'file2')
   .option('-f, --format <type>', 'define output format', 'stylish')
   .action((filepath1, filepath2, option) => { genDiff(filepath1, filepath2, option); });
+
+export default genDiff;
