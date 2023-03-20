@@ -6,7 +6,7 @@ function output(diff, option) {
   const opt = (typeof option === 'object') ? option.format : option;
   if (opt === 'stylish') return makeStylish(diff);
   if (opt === 'plain') return makePlain(diff);
-  if (opt === 'json') return `[${JSON.stringify(diff)}]`;
+  return `[${JSON.stringify(diff)}]`;
 }
 
 export default output;

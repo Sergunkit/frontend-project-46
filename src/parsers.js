@@ -2,6 +2,7 @@ import yaml from 'js-yaml';
 import fs from 'fs';
 import path from 'path';
 
+// eslint-disable-next-line consistent-return
 export default (filepath) => { // получает путь к файлу выдает содержимое в виде Map
   const fullPath = path.resolve(filepath); // получаем (проверяем) полный путь к файлу
   if (['.yml', '.yaml'].includes(path.extname(fullPath))) {
