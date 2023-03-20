@@ -9,3 +9,5 @@
 ![Test Status](https://github.com/Sergunkit/frontend-project-46/actions/workflows/first.yml/badge.svg?event=push)
 
 https://asciinema.org/a/yIR5Yal0z323Yfn5dufWTTclX
+
+[![asciicast](https://asciinema.org/a/568642.svg)](https://asciinema.org/a/568642)
