@@ -1,5 +1,7 @@
 ### Hexlet tests and linter status:
 
+Console application that compares two files in JSON or YAML format and outputs the result of the comparison in one of three possible formats, depending on the option.
+
 [![Actions Status](https://github.com/Sergunkit/frontend-project-46/workflows/hexlet-check/badge.svg)](https://github.com/Sergunkit/frontend-project-46/actions)
 
 [![Maintainability](https://api.codeclimate.com/v1/badges/574a83b3791c342014bf/maintainability)](https://codeclimate.com/github/Sergunkit/frontend-project-46/maintainability)
