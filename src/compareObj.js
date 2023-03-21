@@ -73,7 +73,7 @@ const addingSpaces = (obj) => { // добавляет пробелы к влож
   return obj;
 };
 
-const genDiff = (filepath1, filepath2, option = 'stylish') => { // получает два объекта и формирует diff
+const gendiff = (filepath1, filepath2, option = 'stylish') => { // получает два объекта и формирует diff
   const obj1 = getObj(filepath1);
   const obj2 = getObj(filepath2);
   let diff = makeDiff(obj1, obj2);
@@ -81,4 +81,4 @@ const genDiff = (filepath1, filepath2, option = 'stylish') => { // получа�
   return output(diff, option);
 };
 
-export default genDiff;
+export default gendiff;
