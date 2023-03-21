@@ -12,4 +12,6 @@ program
   .option('-f, --format <type>', 'define output format', 'stylish')
   .action((filepath1, filepath2, option) => { gendiff(filepath1, filepath2, option); });
 
+program.parse();
+
 export default gendiff;
