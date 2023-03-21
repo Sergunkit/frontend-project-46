@@ -69,7 +69,7 @@ const makePlain = (diff) => { // опред-т переменные и вызы�
   const keyPath = '';
   let plainDiff = comparator(keyPath, res, diff);
   plainDiff = plainDiff.replace(/y './g, "y '");
-  console.log(plainDiff);
+  // console.log(plainDiff);
   return plainDiff;
 };
 

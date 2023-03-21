@@ -6,7 +6,7 @@ function output(diff, option) {
   const opt = (typeof option === 'object') ? option.format : option;
   if (opt === 'stylish') return makeStylish(diff);
   if (opt === 'plain') return makePlain(diff);
-  console.log(`[${JSON.stringify(diff)}]`);
+  // console.log(`[${JSON.stringify(diff)}]`);
   return `[${JSON.stringify(diff)}]`;
 }
 

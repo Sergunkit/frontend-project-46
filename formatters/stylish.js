@@ -9,18 +9,18 @@ const makeStylish = (diff) => {
     let j = stringOut[i];
     if (stringOut[i] === '{') {
       deep += 4;
-      j = `{\n${shift.repeat(deep)}`;
+      j = `{\n${shift.repeat(deep - 2)}`;
     }
     if (stringOut[i] === '}') {
-      j = `\n${shift.repeat(deep)}}`;
+      j = `\n${shift.repeat(deep - 2)}}`;
       deep -= 4;
     }
     if (stringOut[i] === ',') {
-      j = `\n${shift.repeat(deep)}`;
+      j = `\n${shift.repeat(deep - 2)}`;
     }
     stylishDiff += j;
   }
-  console.log(stylishDiff);
+  // console.log(stylishDiff);
   return stylishDiff;
 };
 
