@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { program } from 'commander';
-import genDiff from '../src/compareObj.js';
+import gendiff from '../src/compareObj.js';
 
 program
   .name('gendiff')
@@ -10,6 +10,6 @@ program
   .argument('<filepath1>', 'file1')
   .argument('<filepath2>', 'file2')
   .option('-f, --format <type>', 'define output format', 'stylish')
-  .action((filepath1, filepath2, option) => { genDiff(filepath1, filepath2, option); });
+  .action((filepath1, filepath2, option) => { gendiff(filepath1, filepath2, option); });
 
-export default genDiff;
+export default gendiff;
