@@ -12,7 +12,7 @@ const makeStylish = (diff) => {
       j = `{\n${shift.repeat(deep - 2)}`;
     }
     if (stringOut[i] === '}') {
-      j = `\n${shift.repeat(deep - 2)}}`;
+      j = `\n${shift.repeat(deep - 4)}}`;
       deep -= 4;
     }
     if (stringOut[i] === ',') {
