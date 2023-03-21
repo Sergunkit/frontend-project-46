@@ -8,12 +8,12 @@ const makeStylish = (diff) => {
   for (let i = 0; i < stringOut.length; i += 1) {
     let j = stringOut[i];
     if (stringOut[i] === '{') {
-      deep += 2;
+      deep += 4;
       j = `{\n${shift.repeat(deep)}`;
     }
     if (stringOut[i] === '}') {
       j = `\n${shift.repeat(deep)}}`;
-      deep -= 2;
+      deep -= 4;
     }
     if (stringOut[i] === ',') {
       j = `\n${shift.repeat(deep)}`;
