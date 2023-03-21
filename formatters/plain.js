@@ -11,6 +11,8 @@ const comparator = (keyPath, res, diff) => { // сравивает между с
     if (keyPath === flag) { // проверка на
       // eslint-disable-next-line no-use-before-define, no-param-reassign
       res = deleteLastRec(res, '\n');
+      // eslint-disable-next-line no-use-before-define, no-param-reassign
+      res = deleteLastRec(res, '\n');
       // eslint-disable-next-line no-use-before-define
       value = conformValue(value);
       // eslint-disable-next-line no-param-reassign
@@ -49,8 +51,8 @@ const comparator = (keyPath, res, diff) => { // сравивает между с
 
 const deleteLastRec = (str, sep) => { // удаляет последюю запись из строки
   const arr = str.split(sep);
-  const shift = (sep === '.') ? 1 : 2;
-  arr.splice(arr.length - shift);
+  // const shift = (sep === '\n') ? 2 : 1;
+  arr.splice(arr.length - 1);
   // eslint-disable-next-line no-param-reassign
   str = arr.join(sep);
   return str;
@@ -69,6 +71,7 @@ const makePlain = (diff) => { // опред-т переменные и вызы�
   const keyPath = '';
   let plainDiff = comparator(keyPath, res, diff);
   plainDiff = plainDiff.replace(/y './g, "y '");
+  plainDiff = deleteLastRec(plainDiff, '\n');
   // console.log(plainDiff);
   return plainDiff;
 };

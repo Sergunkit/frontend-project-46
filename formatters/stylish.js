@@ -20,7 +20,7 @@ const makeStylish = (diff) => {
     }
     stylishDiff += j;
   }
-  // console.log(stylishDiff);
+  console.log(stylishDiff);
   return stylishDiff;
 };
 
