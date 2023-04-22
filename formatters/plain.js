@@ -1,79 +1,32 @@
-const comparator = (keyPath, res, diff) => { // сравивает между собой смежные элементы диффа
-  let flag; // хранит полный путь ключа элемента до следующей итерации для  сравнения
-  let lastValue = ''; // хранит значение "-"го элемента до след-й итерации
-  // eslint-disable-next-line no-restricted-syntax, guard-for-in
-  for (const key in diff) {
-    let lastKeyPath = keyPath; // записываем предыдущий ключ в полный путь
-    let value = diff[key];
-    // eslint-disable-next-line no-param-reassign
-    keyPath = key.slice(2); // записываем новый ключ
+import _ from 'lodash';
 
-    if (keyPath === flag) { // проверка на
-      // eslint-disable-next-line no-use-before-define, no-param-reassign
-      res = deleteLastRec(res, '\n');
-      // eslint-disable-next-line no-use-before-define, no-param-reassign
-      res = deleteLastRec(res, '\n');
-      // eslint-disable-next-line no-use-before-define
-      value = conformValue(value);
-      // eslint-disable-next-line no-param-reassign
-      res += `\nProperty '${lastKeyPath}.${keyPath}' was updated. From ${lastValue} to ${value}\n`;
-      // eslint-disable-next-line no-param-reassign
-      keyPath = lastKeyPath;
-      // eslint-disable-next-line no-continue
-      continue;
-    }
-    if (key[0] === '-') { // проверка на "-"
-      // eslint-disable-next-line no-param-reassign
-      res += `Property '${lastKeyPath}.${keyPath}' was removed\n`;
-      flag = keyPath;
-      // eslint-disable-next-line no-use-before-define
-      value = conformValue(value);
-      lastValue = value;
-    }
-    if (key[0] === '+') { // проверка на "+"
-      // eslint-disable-next-line no-use-before-define
-      value = conformValue(value);
-      // eslint-disable-next-line no-param-reassign
-      res += `Property '${lastKeyPath}.${keyPath}' was added with value: ${value}\n`;
-    }
-    if ((key[0] === ' ') && (typeof value === 'object')) { // проверка на вложенность в неизмен-х ключах
-      lastKeyPath += `.${keyPath}`;
-      // eslint-disable-next-line no-param-reassign
-      res = comparator(lastKeyPath, res, value);
-      // eslint-disable-next-line no-use-before-define
-      lastKeyPath = deleteLastRec(lastKeyPath, '.');
-    }
-    // eslint-disable-next-line no-param-reassign
-    keyPath = lastKeyPath;
-  }
-  return res;
-};
-
-const deleteLastRec = (str, sep) => { // удаляет последюю запись из строки
-  const arr = str.split(sep);
-  // const shift = (sep === '\n') ? 2 : 1;
-  arr.splice(arr.length - 1);
-  // eslint-disable-next-line no-param-reassign
-  str = arr.join(sep);
-  return str;
-};
-
-const conformValue = (value) => { // форматирует значение в зависимости от типа
-  // eslint-disable-next-line no-param-reassign
-  if (typeof value === 'string') { value = `'${value}'`; }
-  // eslint-disable-next-line no-param-reassign
-  if ((typeof value === 'object') && (value !== null)) { value = '[complex value]'; }
-  return value;
-};
-
-const makePlain = (diff) => { // опред-т переменные и вызывает рукурсивную comparator
-  const res = '';
-  const keyPath = '';
-  let plainDiff = comparator(keyPath, res, diff);
-  plainDiff = plainDiff.replace(/y './g, "y '");
-  plainDiff = deleteLastRec(plainDiff, '\n');
-  // console.log(plainDiff);
+const makePlain = (diff) => {
+  const plndDif = diff.filter((el) => _.has(el, 'diff'))
+    .reduce((acc, el) => {
+      const el0 = (typeof el.diff[0] === 'string') && (el.diff[0] !== '[complex value]') ? `'${el.diff[0]}'` : el.diff[0];
+      const el1 = (typeof el.diff[1] === 'string') && (el.diff[1] !== '[complex value]') ? `'${el.diff[1]}'` : el.diff[1];
+      const value = (typeof el.value === 'string') && (el.value !== '[complex value]') ? `'${el.value}'` : el.value;
+      const path = (el.path) ? `${el.path}.${el.key}` : el.key;
+      switch (el.diff) {
+        case 'added':
+          return (
+            acc.concat(`Property '${path}' was added with value: ${value}\n`)
+          );
+        case 'removed':
+          return (
+            acc.concat(`Property '${path}' was removed\n`)
+          );
+        case 'changed':
+          return acc;
+        default:
+          return (
+            acc.concat(`Property '${path}' was updated. From ${el0} to ${el1}\n`)
+          );
+      }
+    }, '');
+  const arr = plndDif.split('\n');
+  const mArr = arr.slice(0, arr.length - 1);
+  const plainDiff = mArr.join('\n');
   return plainDiff;
 };
-
 export default makePlain;
