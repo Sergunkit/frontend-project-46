@@ -1,6 +1,5 @@
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
-import makeStylish from '../formatters/stylish.js';
 import readFile from '../src/parsers.js';
 import genDiff from '../src/compareObj.js';
 import output34 from '../__fixtures__/output_34.js';
@@ -9,12 +8,6 @@ import output12 from '../__fixtures__/output_12.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const getFixturePath = (filename) => path.join(__dirname, '..', '__fixtures__', filename);
-
-const makeTestString = (filePath) => {
-  let fixtureFile = readFile(getFixturePath(filePath));
-  fixtureFile = makeStylish(fixtureFile);
-  return fixtureFile;
-};
 
 const makePlainTestString = (filePath) => {
   const str = readFile(getFixturePath(filePath));
