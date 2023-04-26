@@ -53,7 +53,8 @@ const makeStylish = (dif) => {
     prevDeep.deep = elmt.deep;
     return acc.concat(innerFunc(elmt, shift));
   }, '{\n');
-  const stlshDiff = `${res + bracketCloser(brackets.bracketCount, prevDeep.deep - 1)}}\n`;
+  const stlshDiff = `${res + bracketCloser(brackets.bracketCount, prevDeep.deep - 1)}}`;
+
   return stlshDiff;
 };
 export default makeStylish;

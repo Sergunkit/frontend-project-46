@@ -76,10 +76,10 @@ const makeDiff = (obj1, obj2) => { // формирует результат
     }
     return acc.concat(compareArr(elem, names1, namedArr2)); // вызов функции, на второй массиив
   }, []);
-  const dif2 = namedArr2.filter((elt) => {
-    const namesDif1 = dif1.map((el) => el.key);
-    return (!namesDif1.includes(elt.key));
-  });
+  // const dif2 = namedArr2.filter((elt) => {
+  //   const namesDif1 = dif1.map((el) => el.key);
+  //   return (!namesDif1.includes(elt.key));
+  // });
   // const dif = [...dif1, ...dif2];
   // console.log(dif);
   return dif1.flat().filter((el) => !!el);
@@ -128,5 +128,5 @@ const gendiff = (filepath1, filepath2, option = 'stylish') => { // получа�
 
 // console.log(modify(getObj('./__fixtures__/file5.json')));
 // console.log(getObj('./__fixtures__/file4.yaml'));
-console.log(gendiff('./__fixtures__/file5.json', './__fixtures__/file6.json', 'stylish'));
+// console.log(gendiff('./__fixtures__/file5.json', './__fixtures__/file6.json', 'stylish'));
 export default gendiff;
