@@ -34,5 +34,10 @@ test('Plain formatter check', () => {
 });
 
 test('JSON formatter check', () => {
+  // console.log(readFile('./__fixtures__/output_56'));
   expect(genDiff(getFixturePath('file3.json'), getFixturePath('file4.json'), 'json')).toEqual(makeJsonTestString('output_34.json'));
+});
+
+test('hexlet test', () => {
+  expect(genDiff(getFixturePath('file5.json'), getFixturePath('file6.json'), 'stylish')).toEqual(readFile('./__fixtures__/output_56'));
 });

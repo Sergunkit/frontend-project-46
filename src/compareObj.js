@@ -36,11 +36,11 @@ const modify = (obj) => { // модифицирует объект в плоск
   return res;
 };
 
-const compareArr = (elem, names1, arr2) => { // сравивает поэлементно массивы
+const compareArr = (elem, names1, namedArr2) => { // сравивает поэлементно массивы
   const diff2 = [];
-  const di = arr2.reduce((acc, el) => { // итерируется по второму массиву
-    if (!(names1.includes(el.key))) { // если ключа нет в первом массиве записываем 'added'
-      names1.push(el.key); // добавляем ключ в первый массив, чтоб ключ не срабатывал
+  const di = namedArr2.reduce((acc, el) => { // итерируется по второму массиву элемнетов
+    if (!(names1.includes(el.key))) { // если ключа нет в первом массиве имён, записываем 'added'
+      names1.push(el.key); // добавляем ключ в первый массив, чтоб ключ не срабатывал на след. шагах
       return acc.concat({ ...el, value: el.value, diff: 'added' });
     }
     if ((el.key === elem.key) && (el.value === elem.value) && (el.path === elem.path)) { // не изм.
@@ -62,15 +62,27 @@ const compareArr = (elem, names1, arr2) => { // сравивает поэлем�
 const makeDiff = (obj1, obj2) => { // формирует результат
   const arr1 = modify(obj1); // объект преобразуется в массив
   const arr2 = modify(obj2);
-  const names2 = arr2.map((el) => el.key);
-  const names1 = arr1.map((item) => item.key);
-  const dif = arr1.reduce((acc, elem) => { // итерация по первому массиву
+  const namedArr2 = arr2.map((el) => (
+    { ...el, key: `${el.key}/${el.path}` }
+  ));
+  const namedArr1 = arr1.map((el) => (
+    { ...el, key: `${el.key}/${el.path}` }
+  ));
+  const names1 = arr1.map((item) => `${item.key}/${item.path}`);
+  const names2 = arr2.map((item) => `${item.key}/${item.path}`);
+  const dif1 = namedArr1.reduce((acc, elem) => { // итерация по первому массиву
     if (!(names2.includes(elem.key))) { // если эл-та нет во втором массиве записываем 'removed'
       return acc.concat({ ...elem, diff: 'removed' });
     }
-    return acc.concat(compareArr(elem, names1, arr2)); // вызов функции, обходящей второй массиив
+    return acc.concat(compareArr(elem, names1, namedArr2)); // вызов функции, на второй массиив
   }, []);
-  return dif.flat().filter((el) => !!el);
+  const dif2 = namedArr2.filter((elt) => {
+    const namesDif1 = dif1.map((el) => el.key);
+    return (!namesDif1.includes(elt.key));
+  });
+  // const dif = [...dif1, ...dif2];
+  // console.log(dif);
+  return dif1.flat().filter((el) => !!el);
 };
 
 const sortDiff = (arr) => { // поуровневая сортировка по ключам
@@ -79,9 +91,10 @@ const sortDiff = (arr) => { // поуровневая сортировка по 
   const sortChild = (par, diff) => {
     const curChldn = _.sortBy(par.chldn); // делаем и сортируем список вложений
     const sortedChld = curChldn.reduce((acc, chldName) => { // итерация по вложениям корневых эл.
-      const elemByName = diff.filter((elt) => {
+      const elemByName = diff.filter((elt) => { // поиск элемента в массиве по имени ребенка
+        // const name = elt.key.split('/')[0];
         const pKey = par.path ? `.${par.key}` : `${par.key}`; // точка перед ключом, если путь есть
-        const chldPath = par.path.concat(pKey);
+        const chldPath = par.path.concat(pKey); // формируем полный путь
         return ((elt.key === chldName) && (chldPath === elt.path));
       })[0];
       if (par.diff) { elemByName.diff = 'changed'; } // если родитель изменен, выделяем вложение
@@ -105,12 +118,15 @@ const gendiff = (filepath1, filepath2, option = 'stylish') => { // получа�
   const obj1 = getObj(filepath1); // из файла формируется объект
   const obj2 = getObj(filepath2);
   const diff = makeDiff(obj1, obj2);
-  const sortedDiff = sortDiff(diff);
+  const dif = diff.map((el) => (
+    { ...el, key: el.key.split('/')[0] }
+  ));
+  const sortedDiff = sortDiff(dif);
   return output(sortedDiff, option);
   // return sortedDiff;
 };
 
-// console.log(modify(getObj('./__fixtures__/file4.yaml')));
+// console.log(modify(getObj('./__fixtures__/file5.json')));
 // console.log(getObj('./__fixtures__/file4.yaml'));
-// console.log(gendiff('./__fixtures__/file3.json', './__fixtures__/file4.json', 'json'));
+console.log(gendiff('./__fixtures__/file5.json', './__fixtures__/file6.json', 'stylish'));
 export default gendiff;
