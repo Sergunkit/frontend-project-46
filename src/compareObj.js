@@ -2,29 +2,26 @@ import _ from 'lodash';
 import getObj from './parsers.js';
 import output from '../formatters/index.js';
 
-const modify = (obj) => { // модифицирует объект в плоский массив объектов
-  const deep = [0];
-  const path = [];
-  const getFlatObj = (value, cPath, key) => { // вызывается рекурсивно, записывает свойства в объект
-    const res = [];
-    if ((typeof (value) === 'object') && value !== null) {
+const modify = (obj) => { // модифицирует объект с вложениями в плоский массив объектов
+  const getFlatObj = (value, path, deep, key) => { // вызывается рекурсивно
+    const rslt = [];
+    if ((typeof value === 'object') && value !== null) {
       const chldn = Object.keys(value);
       const elem = {
-        key, value: '[complex value]', chldn, deep: deep[0] - 1, path: path[0],
+        key, value: '[complex value]', chldn, deep, path,
       };
-      path[0] = key ? `${cPath}.${key}` : '';
-      deep[0] += 1;
-      const re = chldn.reduce((acc, cKey) => acc.concat(getFlatObj(value[cKey], path, cKey)), []);
-      deep[0] -= 1;
-      path[0] = path[0].split('.').slice(0, -1).join('.');
+      const re = chldn.reduce((acc, cKey) => {
+        const cPath = key ? `${path}.${key}` : '';
+        return acc.concat(getFlatObj(value[cKey], cPath, deep + 1, cKey));
+      }, []);
       return [...re, elem];
     }
     const elem = {
-      key, value, deep: deep[0] - 1, path: path[0],
+      key, value, deep, path,
     };
-    return [...res, elem];
+    return [...rslt, elem];
   };
-  const res = getFlatObj(obj, path).filter((elem) => (!!elem.key)) // удаление пустых елементов
+  const res = getFlatObj(obj, [], -1).filter((elem) => (!!elem.key)) // удаление пустых елементов
     .map((elem) => {
       if (elem.path && elem.path.startsWith('.')) { // удаление точек в начале пути
         const mPath = elem.path.slice(1);
@@ -37,26 +34,28 @@ const modify = (obj) => { // модифицирует объект в плоск
 };
 
 const compareArr = (elem, names1, namedArr2) => { // сравивает поэлементно массивы
-  const diff2 = [];
+  // const diff2 = [];
   const di = namedArr2.reduce((acc, el) => { // итерируется по второму массиву элемнетов
-    if (!(names1.includes(el.key))) { // если ключа нет в первом массиве имён, записываем 'added'
-      names1.push(el.key); // добавляем ключ в первый массив, чтоб ключ не срабатывал на след. шагах
+    if (!(names1.includes(el.key))) {
+      // console.log(el.key);
+      // names1.push(el.key);
       return acc.concat({ ...el, value: el.value, diff: 'added' });
     }
-    if ((el.key === elem.key) && (el.value === elem.value) && (el.path === elem.path)) { // не изм.
+    if ((el.key === elem.key) && (el.value === elem.value)) { // не изм.
       const chldn = _.union(el.chldn, elem.chldn);
       return acc.concat({ ...el, chldn });
     }
-    if ((el.key === elem.key) && (el.path === elem.path)) { // значение элемента изменилось
+    if ((el.key === elem.key)) { // значение элемента изменилось
       const chldn = _.union(el.chldn, elem.chldn);
       return acc.concat({ ...el, chldn, diff: [elem.value, el.value] });
     }
-    if (el.key === elem.key) { // одинаковый ключ, разные пути
-      return [...acc, el, elem];
-    }
+    // if (el.key === elem.key) { // одинаковый ключ, разные пути
+    //   return [...acc, el, elem];
+    // }
     return acc;
   }, []);
-  return [...diff2, di];
+  // console.log(di, 'ttt');
+  return [di];
 };
 
 const makeDiff = (obj1, obj2) => { // формирует результат
@@ -76,13 +75,13 @@ const makeDiff = (obj1, obj2) => { // формирует результат
     }
     return acc.concat(compareArr(elem, names1, namedArr2)); // вызов функции, на второй массиив
   }, []);
-  // const dif2 = namedArr2.filter((elt) => {
-  //   const namesDif1 = dif1.map((el) => el.key);
-  //   return (!namesDif1.includes(elt.key));
-  // });
-  // const dif = [...dif1, ...dif2];
-  // console.log(dif);
-  return dif1.flat().filter((el) => !!el);
+  const flattedDif = dif1.flat().filter((el) => !!el);
+  const difNames = _.union(flattedDif.map((el) => el.key));
+  const dif2 = difNames.map((elt) => {
+    const elmt = flattedDif.find((el) => el.key === elt);
+    return elmt;
+  });
+  return dif2.flat();
 };
 
 const sortDiff = (arr) => { // поуровневая сортировка по ключам
@@ -91,13 +90,12 @@ const sortDiff = (arr) => { // поуровневая сортировка по 
   const sortChild = (par, diff) => {
     const curChldn = _.sortBy(par.chldn); // делаем и сортируем список вложений
     const sortedChld = curChldn.reduce((acc, chldName) => { // итерация по вложениям корневых эл.
-      const elemByName = diff.filter((elt) => { // поиск элемента в массиве по имени ребенка
-        // const name = elt.key.split('/')[0];
+      const elemOfDif = diff.filter((elt) => { // поиск элемента в массиве по имени влож-го объекта
         const pKey = par.path ? `.${par.key}` : `${par.key}`; // точка перед ключом, если путь есть
         const chldPath = par.path.concat(pKey); // формируем полный путь
         return ((elt.key === chldName) && (chldPath === elt.path));
       })[0];
-      if (par.diff) { elemByName.diff = 'changed'; } // если родитель изменен, выделяем вложение
+      const elemByName = (par.diff) ? { ...elemOfDif, diff: 'changed' } : elemOfDif;// если родитель изменен, выделяем вложение
       if (elemByName.chldn) { // если есть вложения, делаем рекурсивный вызов
         return acc.concat([elemByName, ...sortChild(elemByName, arr)]);
       }
@@ -126,7 +124,7 @@ const gendiff = (filepath1, filepath2, option = 'stylish') => { // получа�
   // return sortedDiff;
 };
 
-// console.log(modify(getObj('./__fixtures__/file5.json')));
+// console.log(modify(getObj('./__fixtures__/file3.json')));
 // console.log(getObj('./__fixtures__/file4.yaml'));
-// console.log(gendiff('./__fixtures__/file5.json', './__fixtures__/file6.json', 'stylish'));
+console.log(gendiff('./__fixtures__/file3.json', './__fixtures__/file4.json', 'stylish'));
 export default gendiff;
