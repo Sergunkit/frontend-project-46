@@ -5,13 +5,10 @@ const makeStylish = (dif) => {
   };
 
   const innerFunc = (elmt, index, arr) => { // генерация строк вывода
-    // const nextElDeep = (arr[index + 1]) ? arr[index + 1].deep : 0;
     const shift = (arr[index + 1]) ? (elmt.deep - arr[index + 1].deep) : 0;
     const preValue = (typeof elmt.value === 'string') ? `"${elmt.value}"` : elmt.value;
     const value = (preValue === '"[complex value]"') ? '{' : preValue;
     const bracks = (shift > 0) ? bracketCloser(shift) : '';
-    // console.log(shift);
-    // const tab = ('  ').repeat(elmt.deep * 2 + 1);
 
     const insertChldn = (ar, elem) => {
       const chldrn = ar.reduce((acc, el) => {

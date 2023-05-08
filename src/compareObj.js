@@ -34,14 +34,11 @@ const modify = (obj) => { // модифицирует объект с вложе
 };
 
 const compareArr = (elem, names1, namedArr2) => { // сравивает поэлементно массивы
-  // const diff2 = [];
   const di = namedArr2.reduce((acc, el) => { // итерируется по второму массиву элемнетов
     if (!(names1.includes(el.key))) {
-      // console.log(el.key);
-      // names1.push(el.key);
       return acc.concat({ ...el, value: el.value, diff: 'added' });
     }
-    if ((el.key === elem.key) && (el.value === elem.value)) { // не изм.
+    if ((el.key === elem.key) && (el.value === elem.value)) { // значение элемента не изменилось
       const chldn = _.union(el.chldn, elem.chldn);
       return acc.concat({ ...el, chldn });
     }
@@ -49,12 +46,8 @@ const compareArr = (elem, names1, namedArr2) => { // сравивает поэл
       const chldn = _.union(el.chldn, elem.chldn);
       return acc.concat({ ...el, chldn, diff: [elem.value, el.value] });
     }
-    // if (el.key === elem.key) { // одинаковый ключ, разные пути
-    //   return [...acc, el, elem];
-    // }
     return acc;
   }, []);
-  // console.log(di, 'ttt');
   return [di];
 };
 
@@ -121,10 +114,6 @@ const gendiff = (filepath1, filepath2, option = 'stylish') => { // получа�
   ));
   const sortedDiff = sortDiff(dif);
   return output(sortedDiff, option);
-  // return sortedDiff;
 };
 
-// console.log(modify(getObj('./__fixtures__/file3.json')));
-// console.log(getObj('./__fixtures__/file4.yaml'));
-// console.log(gendiff('./__fixtures__/file1.yaml', './__fixtures__/file2.yaml', 'stylish'));
 export default gendiff;
