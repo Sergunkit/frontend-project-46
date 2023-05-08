@@ -126,5 +126,5 @@ const gendiff = (filepath1, filepath2, option = 'stylish') => { // получа�
 
 // console.log(modify(getObj('./__fixtures__/file3.json')));
 // console.log(getObj('./__fixtures__/file4.yaml'));
-console.log(gendiff('./__fixtures__/file3.json', './__fixtures__/file4.json', 'stylish'));
+// console.log(gendiff('./__fixtures__/file1.yaml', './__fixtures__/file2.yaml', 'stylish'));
 export default gendiff;
