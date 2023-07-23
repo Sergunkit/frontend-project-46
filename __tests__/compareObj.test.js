@@ -18,26 +18,20 @@ const makeJsonTestString = (filePath) => {
   const str = `[${JSON.stringify(readFile(getFixturePath(filePath)))}]`;
   return str;
 };
+const output56 = readFile('./__fixtures__/output_56');
+const output34Plain = makePlainTestString('output_34_plain');
+const output34Json = makeJsonTestString('output_34.json');
+const extensions = [['yaml'], ['json']];
+const stylishTestTable = [['file1', 'file2', output12], ['file3', 'file4', output34], ['file5', 'file6', output56]];
+const formatTestTable = [['file3', 'file4', 'stylish', output34], ['file3', 'file4', 'plain', output34Plain], ['file3', 'file4', 'json', output34Json]];
 
-test('FlatFile gendiff check', () => {
-  expect(genDiff(getFixturePath('file1.json'), getFixturePath('file2.json'))).toEqual(output12);
-  expect(genDiff(getFixturePath('file1.yaml'), getFixturePath('file2.yaml'))).toEqual(output12);
+describe.each(extensions)('stylishTest with %s files', (extension) => {
+  test.each(stylishTestTable)(`test ${extension} %s + %s`, (a, b, res) => {
+    expect(genDiff(getFixturePath(`${a}.${extension}`), getFixturePath(`${b}.${extension}`))).toEqual(res);
+  });
 });
-
-test('TreeFile gendiff check', () => {
-  expect(genDiff(getFixturePath('file3.json'), getFixturePath('file4.json'))).toEqual(output34);
-  expect(genDiff(getFixturePath('file3.yaml'), getFixturePath('file4.yaml'))).toEqual(output34);
-});
-
-test('Plain formatter check', () => {
-  expect(genDiff(getFixturePath('file3.json'), getFixturePath('file4.json'), 'plain')).toEqual(makePlainTestString('output_34_plain'));
-});
-
-test('JSON formatter check', () => {
-  // console.log(readFile('./__fixtures__/output_56'));
-  expect(genDiff(getFixturePath('file3.json'), getFixturePath('file4.json'), 'json')).toEqual(makeJsonTestString('output_34.json'));
-});
-
-test('hexlet test', () => {
-  expect(genDiff(getFixturePath('file5.json'), getFixturePath('file6.json'), 'stylish')).toEqual(readFile('./__fixtures__/output_56'));
+describe.each(extensions)('test with %s format', (extension) => {
+  test.each(formatTestTable)(`formatTest ${extension} %s + %s`, (a, b, format, res) => {
+    expect(genDiff(getFixturePath(`${a}.${extension}`), getFixturePath(`${b}.${extension}`), format)).toEqual(res);
+  });
 });

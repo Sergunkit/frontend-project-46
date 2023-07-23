@@ -2,9 +2,8 @@ import yaml from 'js-yaml';
 import fs from 'fs';
 import path from 'path';
 
-// eslint-disable-next-line consistent-return
-export default (filepath) => { // получает путь к файлу выдает содержимое в виде Map
-  const fullPath = path.resolve(filepath); // получаем (проверяем) полный путь к файлу
+function parser(filepath) {
+  const fullPath = path.resolve(process.cwd(), filepath);
   if (['.yml', '.yaml'].includes(path.extname(fullPath))) {
     try { // yaml
       return yaml.load(fs.readFileSync(fullPath, 'utf8'));
@@ -13,7 +12,7 @@ export default (filepath) => { // получает путь к файлу выд
     }
   } else if (path.extname(fullPath) === '.json') {
     try { // json
-      return JSON.parse(fs.readFileSync(fullPath, 'utf8')); // получаем строку, делаем объект
+      return JSON.parse(fs.readFileSync(fullPath, 'utf8'));
     } catch (err) {
       console.error(err);
     }
@@ -24,4 +23,7 @@ export default (filepath) => { // получает путь к файлу выд
       console.error(err);
     }
   }
-};
+  return NaN;
+}
+
+export default parser;
