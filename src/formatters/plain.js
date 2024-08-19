@@ -1,3 +1,21 @@
+import _ from 'lodash';
+
+const getPath = (nodeNames) => nodeNames.flat().join('.');
+
+const checkVal = (value) => {
+  switch (typeof value) {
+    case 'obect': {
+      return !value ? 'null' : '[complex value]';
+    }
+    case 'string': {
+      return `'${value}'`;
+    }
+    default: {
+      return `${value}`;
+    }
+  }
+};
+
 export function makePlainDiff(tree) {
   const iter = (node, path) => node.map((child) => {
     const currentPath = getPath([path, child.key]);

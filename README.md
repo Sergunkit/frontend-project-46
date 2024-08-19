@@ -20,7 +20,7 @@ make gendiff
 
 ### Start:
 
-bin/gendiff.js filePath.fileName1.fileExtension filePath.fileName3.fileExtension outputformat
+bin/gendiff.js filePath.fileName1.fileExtension filePath.fileName3.fileExtension -f outputformat
 
 fileExtension = .json 
               = .yaml

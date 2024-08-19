@@ -1,4 +1,4 @@
-import makePlain from './plain.js';
+import makePlain from './plain.js'; // фромирует вывод
 import makeStylish from './stylish.js';
 
 export default (tree, format) => {
@@ -10,6 +10,6 @@ export default (tree, format) => {
     case 'json':
       return JSON.stringify(tree);
     default:
-      throw new Error(`Unknown format '${format}`);
+      throw new Error(`Unknown format '${format}'`);
   }
 };
