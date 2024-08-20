@@ -1,10 +1,10 @@
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import readFile from '../src/parsers.js';
-import genDiff from '../src/compareObj.js'; // -
-// import genDiff from '../src/index.js'; // +
+import genDiff from '../src/index.js';
 import output34 from '../__fixtures__/output_34.js';
 import output12 from '../__fixtures__/output_12.js';
+import output34json from '../__fixtures__/output_34_json.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -15,16 +15,11 @@ const makePlainTestString = (filePath) => {
   return str;
 };
 
-const makeJsonTestString = (filePath) => {
-  const str = `[${JSON.stringify(readFile(getFixturePath(filePath)))}]`;
-  return str;
-};
 const output56 = readFile('./__fixtures__/output_56');
 const output34Plain = makePlainTestString('output_34_plain');
-const output34Json = makeJsonTestString('output_34.json');
 const extensions = [['yaml'], ['json']];
 const stylishTestTable = [['file1', 'file2', output12], ['file3', 'file4', output34], ['file5', 'file6', output56]];
-const formatTestTable = [['file3', 'file4', 'stylish', output34], ['file3', 'file4', 'plain', output34Plain], ['file3', 'file4', 'json', output34Json]];
+const formatTestTable = [['file3', 'file4', 'stylish', output34], ['file3', 'file4', 'plain', output34Plain], ['file3', 'file4', 'json', output34json]];
 
 describe.each(extensions)('stylishTest with %s files', (extension) => {
   test.each(stylishTestTable)(`test ${extension} %s + %s`, (a, b, res) => {

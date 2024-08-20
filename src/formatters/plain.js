@@ -4,7 +4,7 @@ const getPath = (nodeNames) => nodeNames.flat().join('.');
 
 const checkVal = (value) => {
   switch (typeof value) {
-    case 'obect': {
+    case 'object': {
       return !value ? 'null' : '[complex value]';
     }
     case 'string': {

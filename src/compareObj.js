@@ -1,11 +1,11 @@
 import _ from 'lodash';
 
-const buildAST = (data1, data2) => {
+const compareObj = (data1, data2) => {
   const data1Keys = _.keys(data1);
   const data2Keys = _.keys(data2);
   const sortedKeys = _.sortBy(_.union(data1Keys, data2Keys));
 
-  const children = sortedKeys.map((key) => {
+  const nodes = sortedKeys.map((key) => {
     if (!_.has(data1, key)) {
       return {
         type: 'added',
@@ -24,7 +24,7 @@ const buildAST = (data1, data2) => {
       return {
         type: 'nested',
         key,
-        children: buildAST(data1[key], data2[key]),
+        children: compareObj(data1[key], data2[key]),
       };
     }
     if (_.isEqual(data1[key], data2[key])) {
@@ -41,12 +41,12 @@ const buildAST = (data1, data2) => {
       value2: data2[key],
     };
   });
-  return children;
+  return nodes;
 };
 
-const getDifferenceTree = (data1, data2) => ({
+const gendiff = (data1, data2) => ({
   type: 'root',
-  children: buildAST(data1, data2),
+  children: compareObj(data1, data2),
 });
 
-export default getDifferenceTree;
+export default gendiff;
