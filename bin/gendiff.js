@@ -20,7 +20,7 @@ program
     // console.log(result);
     const options = program.opts();
     console.log(gendiff(filepath1, filepath2, options.format));
-    // console.log(gendiff(filepath1, filepath2, format)); модифицированно по Сизову
+    // console.log(gendiff(filepath1, filepath2, format));
   });
 
 program.parse();
