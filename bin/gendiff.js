@@ -26,4 +26,3 @@ program
 program.parse();
 
 export default gendiff;
-// export default getDifferenceTree;
