@@ -1,12 +1,12 @@
-import makePlain from './plain.js'; // фромирует вывод
-import makeStylish from './stylish.js';
+import makeStylishFormat from './stylish.js';
+import makePlainFormat from './plain.js';
 
 export default (tree, format) => {
   switch (format) {
     case 'stylish':
-      return makeStylish(tree);
+      return makeStylishFormat(tree);
     case 'plain':
-      return makePlain(tree);
+      return makePlainFormat(tree);
     case 'json':
       return JSON.stringify(tree);
     default:

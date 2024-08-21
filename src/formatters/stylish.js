@@ -1,11 +1,11 @@
 import _ from 'lodash';
 
-const indent = ' ';
-const indentSize = 4;
-const currentIndent = (depth) => indent.repeat(indentSize * depth - 2);
-const braceIndent = (depth) => indent.repeat(indentSize * depth - indentSize);
+const space = ' ';
+const spaceCount = 4;
+const indent = (depth) => space.repeat(spaceCount * depth - 2);
+const braceIndent = (depth) => space.repeat(spaceCount * depth - spaceCount);
 
-const joinStrings = (lines, depth) => [
+const formString = (lines, depth) => [
   '{',
   ...lines,
   `${braceIndent(depth)}}`,
@@ -16,40 +16,40 @@ const stringify = (data, depth) => {
     return String(data);
   }
   const keys = _.keys(data);
-  const lines = keys.map((key) => `${currentIndent(depth)}  ${key}: ${stringify(data[key], depth + 1)}`);
-  return joinStrings(lines, depth);
+  const lines = keys.map((key) => `${indent(depth)}  ${key}: ${stringify(data[key], depth + 1)}`);
+  return formString(lines, depth);
 };
 
-const makeStylishDiff = (tree) => {
-  const iter = (node, depth) => {
+const makeStylishFormat = (tree) => {
+  const formResString = (node, depth) => {
     switch (node.type) {
       case 'root': {
-        const result = node.children.flatMap((child) => iter(child, depth));
-        return joinStrings(result, depth);
+        const res = node.children.flatMap((child) => formResString(child, depth));
+        return formString(res, depth);
       }
       case 'nested': {
-        const childrenToString = node.children.flatMap((child) => iter(child, depth + 1));
-        return `${currentIndent(depth)}  ${node.key}: ${joinStrings(childrenToString, depth + 1)}`;
+        const childrenToRes = node.children.flatMap((child) => formResString(child, depth + 1));
+        return `${indent(depth)}  ${node.key}: ${formString(childrenToRes, depth + 1)}`;
       }
       case 'added': {
-        return `${currentIndent(depth)}+ ${node.key}: ${stringify(node.value, depth + 1)}`;
+        return `${indent(depth)}+ ${node.key}: ${stringify(node.value, depth + 1)}`;
       }
       case 'removed': {
-        return `${currentIndent(depth)}- ${node.key}: ${stringify(node.value, depth + 1)}`;
+        return `${indent(depth)}- ${node.key}: ${stringify(node.value, depth + 1)}`;
       }
       case 'changed': {
-        return [`${currentIndent(depth)}- ${node.key}: ${stringify(node.value, depth + 1)}`,
-          `${currentIndent(depth)}+ ${node.key}: ${stringify(node.value2, depth + 1)}`];
+        return [`${indent(depth)}- ${node.key}: ${stringify(node.value, depth + 1)}`,
+          `${indent(depth)}+ ${node.key}: ${stringify(node.value2, depth + 1)}`];
       }
       case 'unchanged': {
-        return `${currentIndent(depth)}  ${node.key}: ${stringify(node.value, depth + 1)}`;
+        return `${indent(depth)}  ${node.key}: ${stringify(node.value, depth + 1)}`;
       }
       default: {
         throw Error('Uncorrect data');
       }
     }
   };
-  return iter(tree, 1);
+  return formResString(tree, 1);
 };
 
-export default makeStylishDiff;
+export default makeStylishFormat;

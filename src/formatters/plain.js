@@ -1,8 +1,8 @@
 import _ from 'lodash';
 
-const getPath = (nodeNames) => nodeNames.flat().join('.');
+const formPath = (nodeNames) => nodeNames.flat().join('.');
 
-const checkVal = (value) => {
+const normVal = (value) => {
   switch (typeof value) {
     case 'object': {
       return !value ? 'null' : '[complex value]';
@@ -17,20 +17,20 @@ const checkVal = (value) => {
 };
 
 export function makePlainDiff(tree) {
-  const iter = (node, path) => node.map((child) => {
-    const currentPath = getPath([path, child.key]);
-    switch (child.type) {
+  const formResString = (node, path) => node.map((elem) => {
+    const currentPath = formPath([path, elem.key]);
+    switch (elem.type) {
       case 'nested': {
-        return iter(child.children, currentPath);
+        return formResString(elem.children, currentPath);
       }
       case 'added': {
-        return `Property '${currentPath}' was added with value: ${checkVal(child.value)}`;
+        return `Property '${currentPath}' was added with value: ${normVal(elem.value)}`;
       }
       case 'removed': {
         return `Property '${currentPath}' was removed`;
       }
       case 'changed': {
-        return `Property '${currentPath}' was updated. From ${checkVal(child.value)} to ${checkVal(child.value2)}`;
+        return `Property '${currentPath}' was updated. From ${normVal(elem.value)} to ${normVal(elem.value2)}`;
       }
       case 'unchanged': {
         return null;
@@ -40,12 +40,12 @@ export function makePlainDiff(tree) {
       }
     }
   });
-  return iter(tree.children, []);
+  return formResString(tree.children, []);
 }
 
-export default function makePlain(data) {
-  const result = makePlainDiff(data);
-  const flatten = _.flattenDeep(result);
-  const filtered = flatten.filter((el) => el);
-  return filtered.join('\n');
+export default function makePlainForm(data) {
+  const res = makePlainDiff(data);
+  const flattenRes = _.flattenDeep(res);
+  const filteredRes = flattenRes.filter((elem) => elem);
+  return filteredRes.join('\n');
 }
