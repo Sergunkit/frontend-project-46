@@ -1,4 +1,6 @@
 import _ from 'lodash';
+import output from './index.js';
+import getObj from './parsers.js';
 
 const compareObj = (data1, data2) => {
   const data1Keys = _.keys(data1);
@@ -44,9 +46,14 @@ const compareObj = (data1, data2) => {
   return nodes;
 };
 
-const gendiff = (data1, data2) => ({
-  type: 'root',
-  children: compareObj(data1, data2),
-});
+const gendiff = (filepath1, filepath2, option = 'stylish') => {
+  const obj1 = getObj(filepath1);
+  const obj2 = getObj(filepath2);
+  const diff = {
+    type: 'root',
+    children: compareObj(obj1, obj2),
+  };
+  return output(diff, option);
+};
 
 export default gendiff;

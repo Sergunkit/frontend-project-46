@@ -1,7 +1,7 @@
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import readFile from '../src/parsers.js';
-import genDiff from '../src/index.js';
+import genDiff from '../src/compareObj.js';
 import output34 from '../__fixtures__/output_34.js';
 import output12 from '../__fixtures__/output_12.js';
 import output34json from '../__fixtures__/output_34_json.js';
