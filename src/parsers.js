@@ -8,22 +8,20 @@ function parser(filepath) {
     : path.resolve(process.cwd(), (`__fixtures__/${fpath}`))
   );
 
-  // const fullPath = path.resolve(process.cwd(), filepath);
-
   if (['.yml', '.yaml'].includes(path.extname(fullPath(filepath)))) {
-    try { // yaml
+    try {
       return yaml.load(fs.readFileSync(fullPath(filepath), 'utf8'));
     } catch (err) {
       console.error(err);
     }
   } else if (path.extname(fullPath(filepath)) === '.json') {
-    try { // json
+    try {
       return JSON.parse(fs.readFileSync(fullPath(filepath), 'utf8'));
     } catch (err) {
       console.error(err);
     }
   } else {
-    try { // txt
+    try {
       return fs.readFileSync(fullPath(filepath), 'utf8');
     } catch (err) {
       console.error(err);
